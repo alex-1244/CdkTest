@@ -17,8 +17,8 @@ jobs:
     - name: Build the Docker image
       run: docker build app/CdkTest --file app/CdkTest/CdkTest.Web/Dockerfile --tag cdk-test-web:latest
     - name: Push to Amazon ECR
-    - uses: jwalton/gh-ecr-push@v1.0.0
-    - run: docker build app/CdkTest --file app/CdkTest/CdkTest.Web/Dockerfile --tag cdk-test-web:dev-latest
+      uses: jwalton/gh-ecr-push@v1.0.0
+      run: docker build app/CdkTest --file app/CdkTest/CdkTest.Web/Dockerfile --tag cdk-test-web:dev-latest
       id: ecr
       uses: jwalton/gh-ecr-push@v1
       with:
