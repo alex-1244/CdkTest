@@ -1,4 +1,5 @@
 using Amazon.CDK;
+using Amazon.CDK.AWS.ECR;
 
 namespace Cdk
 {
@@ -6,7 +7,10 @@ namespace Cdk
     {
         internal CdkStack(Construct scope, string id, IStackProps props = null) : base(scope, id, props)
         {
-            // The code that defines your stack goes here
+	        var repository = new Repository(this, "cdk-test", new RepositoryProps
+	        {
+		        RepositoryName = "cdk_test_ecr_repo"
+            });
         }
     }
 }

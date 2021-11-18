@@ -10,7 +10,7 @@ namespace Cdk
         public static void Main(string[] args)
         {
             var app = new App();
-            new CdkStack(app, "CdkStack", new StackProps
+            new CdkStack(app, "CdkTestStack", new StackProps
             {
                 // If you don't specify 'env', this stack will be environment-agnostic.
                 // Account/Region-dependent features and context lookups will not work,
@@ -28,15 +28,14 @@ namespace Cdk
 
                 // Uncomment the next block if you know exactly what Account and Region you
                 // want to deploy the stack to.
-                /*
                 Env = new Amazon.CDK.Environment
                 {
-                    Account = "123456789012",
-                    Region = "us-east-1",
-                }
-                */
+                    Account = "258166098025",
+                    Region = "eu-west-1",
+                },
 
                 // For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html
+                StackName = "CdkTestStack"
             });
 
             app.Synth();
