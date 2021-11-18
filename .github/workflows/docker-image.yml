@@ -16,3 +16,14 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       run: docker build app/CdkTest --file app/CdkTest/CdkTest.Web/Dockerfile --tag cdk-test-web:latest
+    - uses: jwalton/gh-ecr-push@v1.0.0
+    - name: Push to Amazon ECR
+      - run: docker build app/CdkTest --file app/CdkTest/CdkTest.Web/Dockerfile --tag cdk-test-web:dev-latest
+      - name: Push to ECR
+        id: ecr
+        uses: jwalton/gh-ecr-push@v1
+        with:
+          access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          region: us-east-1
+          image: cdk-test-web:dev-latest, cdk-test-web:latest
