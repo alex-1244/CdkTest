@@ -1,5 +1,6 @@
 using Amazon.CDK;
 using Amazon.CDK.AWS.ECR;
+using Amazon.CDK.AWS.SQS;
 
 namespace Cdk
 {
@@ -11,6 +12,8 @@ namespace Cdk
 	        {
 		        RepositoryName = "cdk_test_ecr_repo"
             });
+            
+            var queue = new Queue(this, "cdk-test-queue");
         }
     }
 }

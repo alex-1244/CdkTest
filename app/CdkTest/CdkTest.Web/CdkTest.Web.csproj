@@ -7,4 +7,9 @@
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.1" />
+      <PackageReference Include="AWSSDK.SQS" Version="3.7.1.45" />
+    </ItemGroup>
+
 </Project>
