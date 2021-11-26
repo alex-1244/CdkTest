@@ -21,13 +21,12 @@ namespace Cdk
             {
                 UserName = "cdk-test-user"
             });
-            
-            
+
             //this is not working ATM
             var taskRole = new Role(this, "cdk-test-cluster-user", new RoleProps
             {
                 RoleName = "cdk-test-ecs-task-role",
-                AssumedBy = user,
+                AssumedBy = new AnyPrincipal(),
                 ManagedPolicies = new IManagedPolicy[]
                 {
                     new ManagedPolicy(this, "full-access-to-ecs", new ManagedPolicyProps
@@ -57,6 +56,8 @@ namespace Cdk
                     })
                 }
             });
+            
+            
 
             var taskDef = new FargateTaskDefinition(this, "cdk-test-ecs-task", new FargateTaskDefinitionProps
             {
