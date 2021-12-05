@@ -15,35 +15,59 @@ namespace Cdk
         internal CdkStack(Construct scope, string id, IStackProps props = null) : base(scope, id, props)
         {
             var queue = new Queue(this, "cdk-test-queue");
-            
-             var ecsCluster = new Cluster(this, "cdk-test-ecs-cluster", new ClusterProps
-             {
+
+            var ecsCluster = new Cluster(this, "cdk-test-ecs-cluster", new ClusterProps
+            {
                 ClusterName = "cdk-test-cluster",
                 EnableFargateCapacityProviders = true
-             });
+            });
 
-             ApplicationLoadBalancedFargateService loadBalancedFargateService = new ApplicationLoadBalancedFargateService(this, "Service", new ApplicationLoadBalancedFargateServiceProps {
-                 Cluster = ecsCluster,
-                 MemoryLimitMiB = 4096,
-                 DesiredCount = 1,
-                 Cpu = 2048,
-                 TaskImageOptions = new ApplicationLoadBalancedTaskImageOptions {
-                     Image = ContainerImage.FromEcrRepository(Repository.FromRepositoryName(this, "cdk-test", "cdk_test_ecr_repo"), "latest")
-                 }
-             });
+            var taskRole = new Role(this, "cdk-test-cluster-role", new RoleProps
+            {
+                RoleName = "cdk-test-ecs-task-role",
+                AssumedBy = new AnyPrincipal(),
+                ManagedPolicies = new[]
+                {
+                    ManagedPolicy.FromManagedPolicyArn(
+                        this, 
+                        "ecs-access-to-sqs-policy",
+                        "arn:aws:iam::aws:policy/AmazonSQSFullAccess")
+                }
+            });
 
-             ScalableTaskCount scalableTarget = loadBalancedFargateService.Service.AutoScaleTaskCount(new EnableScalingProps {
-                 MinCapacity = 1,
-                 MaxCapacity = 3
-             });
+            ApplicationLoadBalancedFargateService loadBalancedFargateService =
+                new ApplicationLoadBalancedFargateService(this, "Service",
+                    new ApplicationLoadBalancedFargateServiceProps
+                    {
+                        Cluster = ecsCluster,
+                        MemoryLimitMiB = 4096,
+                        DesiredCount = 1,
+                        Cpu = 2048,
+                        TaskImageOptions = new ApplicationLoadBalancedTaskImageOptions
+                        {
+                            Image = ContainerImage.FromEcrRepository(
+                                Repository.FromRepositoryName(this, "cdk-test", "cdk_test_ecr_repo"), "latest"),
+                            TaskRole = taskRole
+                        },
+                        ServiceName = "cdk-test-ecs-service"
+                    });
 
-             scalableTarget.ScaleOnCpuUtilization("CpuScaling", new CpuUtilizationScalingProps {
-                 TargetUtilizationPercent = 50,
-             });
+            ScalableTaskCount scalableTarget = loadBalancedFargateService.Service.AutoScaleTaskCount(
+                new EnableScalingProps
+                {
+                    MinCapacity = 1,
+                    MaxCapacity = 3
+                });
 
-             scalableTarget.ScaleOnMemoryUtilization("MemoryScaling", new MemoryUtilizationScalingProps {
-                 TargetUtilizationPercent = 50
-             });
+            scalableTarget.ScaleOnCpuUtilization("CpuScaling", new CpuUtilizationScalingProps
+            {
+                TargetUtilizationPercent = 50,
+            });
+
+            scalableTarget.ScaleOnMemoryUtilization("MemoryScaling", new MemoryUtilizationScalingProps
+            {
+                TargetUtilizationPercent = 50
+            });
         }
     }
 }
