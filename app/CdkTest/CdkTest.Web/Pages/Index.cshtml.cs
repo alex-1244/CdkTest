@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 using Microsoft.AspNetCore.Mvc;
@@ -24,11 +25,18 @@ public class IndexModel : PageModel
 
     public async Task OnPost()
     {
-        await _amazonSqs.SendMessageAsync(new SendMessageRequest
+        try
         {
-            QueueUrl =
-                "https://sqs.eu-west-1.amazonaws.com/258166098025/CdkTestStack-cdktestqueueDBFB05DC-16T19OBVW5TO1",
-            MessageBody = "test_msg"
-        });
+            await _amazonSqs.SendMessageAsync(new SendMessageRequest
+            {
+                QueueUrl =
+                    "https://sqs.eu-west-1.amazonaws.com/258166098025/CdkTestStack-cdktestqueueDBFB05DC-1ULPK26DUPUVK",
+                MessageBody = "test_msg"
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "error while putting message to SQS");
+        }
     }
 }
